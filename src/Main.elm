@@ -93,7 +93,7 @@ view model =
                 , alignLeft
                 , Font.size 36
                 ]
-                (text "Welcome to the Stylish Elephants Lunch Emporium")
+                (text "This the title for the quiz")
             , Input.radio
                 [ spacing 12
                 , padding 10
@@ -101,99 +101,13 @@ view model =
                 ]
                 { selected = Just model.lunch
                 , onChange = \new -> Update { model | lunch = new }
-                , label = Input.labelAbove [ Font.size 14, paddingXY 0 12 ] (text "What would you like for lunch?")
+                , label = Input.labelAbove [ Font.size 20, paddingXY 0 12 ] (text "This is the quiz question? Please select one:")
                 , options =
-                    [ Input.option Gyro (text "Gyro")
-                    , Input.option Burrito (text "Burrito")
-                    , Input.option Taco (text "Taco")
+                    [ Input.option Gyro (text "This is the first answer")
+                    , Input.option Burrito (text "This is the second answer")
+                    , Input.option Taco (text "All of the above")
+                    , Input.option Taco (text "None of the above")
                     ]
-                }
-            , Input.username
-                [ spacing 12
-                , below
-                    (el
-                        [ Font.color red
-                        , Font.size 14
-                        , alignRight
-                        , moveDown 6
-                        ]
-                        (text "This one is wrong")
-                    )
-                ]
-                { text = model.username
-                , placeholder = Just (Input.placeholder [] (text "username"))
-                , onChange = \new -> Update { model | username = new }
-                , label = Input.labelAbove [ Font.size 14 ] (text "Username")
-                }
-            , Input.currentPassword [ spacing 12 ]
-                { text = model.password
-                , placeholder = Nothing
-                , onChange = \new -> Update { model | password = new }
-                , label = Input.labelAbove [ Font.size 14 ] (text "Password")
-                , show = False
-                }
-            , Input.multiline
-                [ height shrink
-                , spacing 12
-
-                -- , padding 6
-                ]
-                { text = model.comment
-                , placeholder = Just (Input.placeholder [] (text "Extra hot sauce?\n\n\nYes pls"))
-                , onChange = \new -> Update { model | comment = new }
-                , label = Input.labelAbove [ Font.size 14 ] (text "Leave a comment!")
-                , spellcheck = False
-                }
-            , Input.checkbox []
-                { checked = model.agreeTOS
-                , onChange = \new -> Update { model | agreeTOS = new }
-                , icon = Input.defaultCheckbox
-                , label = Input.labelRight [] (text "Agree to Terms of Service")
-                }
-            , Input.slider
-                [ Element.height (Element.px 30)
-                , Element.behindContent
-                    (Element.el
-                        [ Element.width Element.fill
-                        , Element.height (Element.px 2)
-                        , Element.centerY
-                        , Background.color grey
-                        , Border.rounded 2
-                        ]
-                        Element.none
-                    )
-                ]
-                { onChange = \new -> Update { model | spiciness = new }
-                , label = Input.labelAbove [] (text ("Spiciness: " ++ String.fromFloat model.spiciness))
-                , min = 0
-                , max = 3.2
-                , step = Nothing
-                , value = model.spiciness
-                , thumb =
-                    Input.defaultThumb
-                }
-            , Input.slider
-                [ Element.width (Element.px 40)
-                , Element.height (Element.px 200)
-                , Element.behindContent
-                    (Element.el
-                        [ Element.height Element.fill
-                        , Element.width (Element.px 2)
-                        , Element.centerX
-                        , Background.color grey
-                        , Border.rounded 2
-                        ]
-                        Element.none
-                    )
-                ]
-                { onChange = \new -> Update { model | spiciness = new }
-                , label = Input.labelAbove [] (text ("Spiciness: " ++ String.fromFloat model.spiciness))
-                , min = 0
-                , max = 3.2
-                , step = Nothing
-                , value = model.spiciness
-                , thumb =
-                    Input.defaultThumb
                 }
             , Input.button
                 [ Background.color blue
@@ -205,6 +119,6 @@ view model =
                 -- , width fill
                 ]
                 { onPress = Nothing
-                , label = Element.text "Place your lunch order!"
+                , label = Element.text "Continue"
                 }
             ]
