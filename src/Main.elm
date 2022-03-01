@@ -20,7 +20,7 @@ grey =
 
 
 blue =
-    Element.rgb 0 0 0.8
+    Element.rgb255 6 176 242
 
 
 red =
@@ -40,22 +40,12 @@ main =
 
 
 init =
-    { username = ""
-    , password = ""
-    , agreeTOS = False
-    , comment = "Extra hot sauce?\n\n\nYes pls"
-    , lunch = Gyro
-    , spiciness = 2
+    { answers = A1
     }
 
 
 type alias Form =
-    { username : String
-    , password : String
-    , agreeTOS : Bool
-    , comment : String
-    , lunch : Lunch
-    , spiciness : Float
+    { answers : Answers
     }
 
 
@@ -69,10 +59,11 @@ update msg _ =
             new
 
 
-type Lunch
-    = Burrito
-    | Taco
-    | Gyro
+type Answers
+    = A1
+    | A2
+    | A3
+    | A4
 
 
 view model =
@@ -99,14 +90,14 @@ view model =
                 , padding 10
                 , Background.color grey
                 ]
-                { selected = Just model.lunch
-                , onChange = \new -> Update { model | lunch = new }
+                { selected = Just model.answers
+                , onChange = \new -> Update { model | answers = new }
                 , label = Input.labelAbove [ Font.size 20, paddingXY 0 12 ] (text "This is the quiz question? Please select one:")
                 , options =
-                    [ Input.option Gyro (text "This is the first answer")
-                    , Input.option Burrito (text "This is the second answer")
-                    , Input.option Taco (text "All of the above")
-                    , Input.option Taco (text "None of the above")
+                    [ Input.option A1 (text "This is the first answer")
+                    , Input.option A2 (text "This is the second answer")
+                    , Input.option A3 (text "All of the above")
+                    , Input.option A4 (text "None of the above")
                     ]
                 }
             , Input.button
