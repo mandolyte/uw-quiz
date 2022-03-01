@@ -38,19 +38,30 @@ main =
         , update = update
         }
 
-
-init =
-    { answers = A1
+type alias Answer =
+    { id : String
+    , text : String
     }
 
+type alias Model =
+  { title: String
+  , currentAnswer: String
+  , answers: List Answer
+  , question: String
+  }
 
-type alias Form =
-    { answers : Answers
-    }
-
+init : Model
+init = 
+    Model "This the title for the quiz" "" 
+        [ Answer "A1" "This is the first answer"
+        , Answer "A2" "This is the second answer"
+        , Answer "A3" "All of the above"
+        , Answer "A4" "None of the above"
+        ]
+        "This is a question?"
 
 type Msg
-    = Update Form
+    = Update Model
 
 
 update msg _ =
@@ -59,12 +70,8 @@ update msg _ =
             new
 
 
-type Answers
-    = A1
-    | A2
-    | A3
-    | A4
-
+makeInput : Answer -> Input.Option String Msg
+makeInput answer = Input.option answer.id (Element.text answer.text)
 
 view model =
     Element.layout
@@ -84,21 +91,16 @@ view model =
                 , alignLeft
                 , Font.size 36
                 ]
-                (text "This the title for the quiz")
+                (text model.title)
             , Input.radio
                 [ spacing 12
                 , padding 10
                 , Background.color grey
                 ]
-                { selected = Just model.answers
-                , onChange = \new -> Update { model | answers = new }
-                , label = Input.labelAbove [ Font.size 20, paddingXY 0 12 ] (text "This is the quiz question? Please select one:")
-                , options =
-                    [ Input.option A1 (text "This is the first answer")
-                    , Input.option A2 (text "This is the second answer")
-                    , Input.option A3 (text "All of the above")
-                    , Input.option A4 (text "None of the above")
-                    ]
+                { selected = Just model.currentAnswer
+                , onChange = \new -> Update { model | currentAnswer = new }
+                , label = Input.labelAbove [ Font.size 20, paddingXY 0 12 ] (text model.question)
+                , options = List.map makeInput model.answers 
                 }
             , Input.button
                 [ Background.color blue
