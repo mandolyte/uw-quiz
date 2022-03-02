@@ -111,7 +111,7 @@ view model =
                 , Font.size 36
                 ]
                 (Element.text model.title)
-            , viewQuestion List.filter isCurrentQuestion model.questions -- how do I specify which question to show
+            , viewQuestion List.filter isCurrentQuestion model.questions -- how do I specify which question to show?
             , Input.button
                 [ Background.color blue
                 , Font.color white
