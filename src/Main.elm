@@ -10,7 +10,7 @@ import Element.Font as Font
 import Element.Input as Input
 import Element.Region as Region
 import Html exposing (..)
-import List.Extra exposing (getAt)
+import List.Extra exposing (getAt, updateIf)
 
 
 white : Color
@@ -120,15 +120,30 @@ nextEntry model =
 
 
 type Msg
-    = Update AnswerId
+    = Update QuestionId AnswerId
     | NextEntry
 
 
 update : Msg -> Model -> Model
 update msg model =
     case Debug.log "msg" msg of
-        Update (AnswerId new) ->
-            { model | scratch = new }
+        Update (QuestionId newq) (AnswerId newa) ->
+            let
+                result = 
+                    updateIf 
+                        (\q -> q.id == QuestionId newq) 
+                        (\q -> 
+                            { answers = q.answers
+                            , correctAnswer = q.correctAnswer
+                            , description = q.description
+                            , id = q.id
+                            , selectedAnswer = AnswerId newa
+                            }
+                        )
+                        model.questions
+            in
+                Debug.log "let" { model | questions = result, scratch = newa }
+                
 
         NextEntry ->
             model |> nextEntry
@@ -183,6 +198,19 @@ viewQuestion model =
         curQuestion =
             getAt 0 curQuestionList
 
+        justCurQuestion =
+            case curQuestion of
+                Just x ->
+                    x
+
+                Nothing ->
+                    { answers = []
+                    , correctAnswer = AnswerId "a0"
+                    , description = "String"
+                    , id = QuestionId "q0"
+                    , selectedAnswer = AnswerId "a0"
+                    }
+
 
         curQuestionDescription =
             case curQuestion of
@@ -206,7 +234,7 @@ viewQuestion model =
         , Background.color grey
         ]
         { selected = Just model.scratch
-        , onChange = \new -> Update (AnswerId new)
+        , onChange = \new -> Update (model.currentQuestion) (AnswerId new)
         , label = Input.labelAbove [ Font.size 20, paddingXY 0 12 ] (Element.text curQuestionDescription)
         , options = List.map makeInput curQuestionAnswers
         }
