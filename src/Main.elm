@@ -178,21 +178,7 @@ viewQuestion model =
             List.filter (\question -> question.id == model.currentQuestion) model.questions
 
         curQuestion =
-            getAt 0 curQuestionList
-
-        justCurQuestion =
-            case curQuestion of
-                Just x ->
-                    x
-
-                Nothing ->
-                    { answers = []
-                    , correctAnswer = "a0"
-                    , description = "String"
-                    , id = "q0"
-                    , selectedAnswer = "a0"
-                    }
-
+            getAt 0 curQuestionList 
 
         curQuestionDescription =
             case curQuestion of
