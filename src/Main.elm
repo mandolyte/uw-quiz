@@ -12,6 +12,7 @@ import Element.Region as Region
 import Html exposing (..)
 import List.Extra exposing (getAt)
 
+
 white =
     Element.rgb 1 1 1
 
@@ -39,71 +40,99 @@ main =
         , update = update
         }
 
-type AnswerId = AnswerId String
-type QuestionId = QuestionId String
-answerIdAsString (AnswerId idString) = idString
-questionIdAsString (QuestionId idString) = idString
+
+type AnswerId
+    = AnswerId String
+
+
+type QuestionId
+    = QuestionId String
+
+
+answerIdAsString (AnswerId idString) =
+    idString
+
+
+questionIdAsString (QuestionId idString) =
+    idString
+
 
 type alias Answer =
     { id : AnswerId
     , description : String
     }
 
+
 type alias Question =
-    { id: QuestionId
-    , description: String
-    , selectedAnswer: AnswerId
-    , correctAnswer: AnswerId
-    , answers: List Answer
+    { id : QuestionId
+    , description : String
+    , selectedAnswer : AnswerId
+    , correctAnswer : AnswerId
+    , answers : List Answer
     }
+
 
 type alias Model =
-    { title: String
-    , currentQuestion: QuestionId
-    , questions: List Question
-    , scratch: String
+    { title : String
+    , currentQuestion : QuestionId
+    , questions : List Question
+    , scratch : String
     }
 
+
 init : Model
-init = 
-    Model "This the title for the quiz" (QuestionId "q1")
-    [ Question (QuestionId "q1") "This is question 1?" (AnswerId "") (AnswerId "a1")
-        [ Answer (AnswerId "a1") "This is answer 1."
-        , Answer (AnswerId "a2") "This is answer 2."
-        , Answer (AnswerId "a3") "All of above."
-        , Answer (AnswerId "a4") "None of above."
+init =
+    Model "This the title for the quiz"
+        (QuestionId "q1")
+        [ Question (QuestionId "q1")
+            "This is question 1?"
+            (AnswerId "")
+            (AnswerId "a1")
+            [ Answer (AnswerId "a1") "This is answer 1."
+            , Answer (AnswerId "a2") "This is answer 2."
+            , Answer (AnswerId "a3") "All of above."
+            , Answer (AnswerId "a4") "None of above."
+            ]
+        , Question (QuestionId "q2")
+            "This is question 2?"
+            (AnswerId "")
+            (AnswerId "a8")
+            [ Answer (AnswerId "a5") "This is q2, answer 1."
+            , Answer (AnswerId "a6") "This is q2, answer 2."
+            , Answer (AnswerId "a7") "All of above."
+            , Answer (AnswerId "a8") "None of above."
+            ]
         ]
-    , Question (QuestionId "q2") "This is question 2?" (AnswerId "") (AnswerId "a8")
-        [ Answer (AnswerId "a5") "This is q2, answer 1."
-        , Answer (AnswerId "a6") "This is q2, answer 2."
-        , Answer (AnswerId "a7") "All of above."
-        , Answer (AnswerId "a8") "None of above."
-        ]
-    ]
-    ""
+        ""
+
 
 nextEntry : Model -> Model
 nextEntry model =
     if model.currentQuestion == QuestionId "q2" then
-        {model | currentQuestion = QuestionId "q1"}
+        { model | currentQuestion = QuestionId "q1" }
+
     else
         { model | currentQuestion = QuestionId "q2" }
 
 
 type Msg
-    = Update Model
+    = Update AnswerId
     | NextEntry
+
 
 update msg model =
     case Debug.log "msg" msg of
-        Update new ->
-            new
+        Update (AnswerId new) ->
+            { model | scratch = new }
 
         NextEntry ->
-            ( model |> nextEntry )
+            model |> nextEntry
+
 
 makeInput : Answer -> Input.Option String Msg
-makeInput answer = Input.option (answerIdAsString answer.id) (Element.text answer.description)
+makeInput answer =
+    Input.option (answerIdAsString answer.id) (Element.text answer.description)
+
 
 view model =
     Element.layout
@@ -134,47 +163,66 @@ view model =
 
                 -- , width fill
                 ]
-                { onPress = Just NextEntry 
+                { onPress = Just NextEntry
                 , label = Element.text "Continue"
                 }
             ]
 
+
 viewQuestion : Model -> Element Msg
-viewQuestion model = 
+viewQuestion model =
     let
-        curQuestionList =  List.filter (\question -> question.id == model.currentQuestion) model.questions
-        curQuestion = getAt 0 curQuestionList
+        curQuestionList =
+            List.filter (\question -> question.id == model.currentQuestion) model.questions
+
+        curQuestion =
+            getAt 0 curQuestionList
+
         -- curQuestion2 = find (\q -> q.id == model.currentQuestion ) model.questions
-        justCurQuestion = 
+        justCurQuestion =
             case curQuestion of
-                Just x -> x
-                Nothing -> { answers = []
-                            , correctAnswer = AnswerId("a0")
-                            , description = "String"
-                            , id = QuestionId("q0")
-                            , selectedAnswer = AnswerId("a0")
-                            }
-        curQuestionIdAsString = 
+                Just x ->
+                    x
+
+                Nothing ->
+                    { answers = []
+                    , correctAnswer = AnswerId "a0"
+                    , description = "String"
+                    , id = QuestionId "q0"
+                    , selectedAnswer = AnswerId "a0"
+                    }
+
+        curQuestionIdAsString =
             case curQuestion of
-                Nothing -> ""
-                Just q -> questionIdAsString q.id
-        curQuestionDescription = 
+                Nothing ->
+                    ""
+
+                Just q ->
+                    questionIdAsString q.id
+
+        curQuestionDescription =
             case curQuestion of
-                Nothing -> ""
-                Just q -> q.description
+                Nothing ->
+                    ""
+
+                Just q ->
+                    q.description
+
         curQuestionAnswers =
             case curQuestion of
-                Nothing -> []
-                Just q -> q.answers
+                Nothing ->
+                    []
+
+                Just q ->
+                    q.answers
     in
     Input.radio
         [ spacing 12
         , padding 10
         , Background.color grey
         ]
-        { selected = Nothing
-        , onChange = \new -> Update { model | scratch = curQuestionIdAsString }
+        { selected = Just model.scratch
+        , onChange = \new -> Update (AnswerId new)
         , label = Input.labelAbove [ Font.size 20, paddingXY 0 12 ] (Element.text curQuestionDescription)
-        , options = List.map makeInput curQuestionAnswers 
+        , options = List.map makeInput curQuestionAnswers
         }
-        
