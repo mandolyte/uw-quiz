@@ -89,13 +89,6 @@ nextEntry model =
     else
         { model | currentQuestion = QuestionId "q2" }
 
-            -- if model.current < List.length model.entries then
-            --     ( model |> Model.nextEntry, Cmd.none )
-
-            -- else
-            --     ( model, Cmd.none )
-
-
 
 type Msg
     = Update Model
@@ -179,17 +172,9 @@ viewQuestion model =
         , padding 10
         , Background.color grey
         ]
-        { selected = Just curQuestionIdAsString
-        , onChange = \new -> Update { model | scratch = "" }
+        { selected = Nothing
+        , onChange = \new -> Update { model | scratch = curQuestionIdAsString }
         , label = Input.labelAbove [ Font.size 20, paddingXY 0 12 ] (Element.text curQuestionDescription)
         , options = List.map makeInput curQuestionAnswers 
         }
         
-
-
-{-
-
-            , viewQuestion List.filter (\question -> question.id == model.currentQuestion) model.questions
-
-                { onPress = \new -> Update { model | currentQuestion = QuestionId("q2") }
--}
