@@ -43,42 +43,24 @@ main =
         }
 
 
-type AnswerId
-    = AnswerId String
-
-
-type QuestionId
-    = QuestionId String
-
-
-answerIdAsString : AnswerId -> String
-answerIdAsString (AnswerId idString) =
-    idString
-
-
-questionIdAsString : QuestionId -> String
-questionIdAsString (QuestionId idString) =
-    idString
-
-
 type alias Answer =
-    { id : AnswerId
+    { id : String
     , description : String
     }
 
 
 type alias Question =
-    { id : QuestionId
+    { id : String
     , description : String
-    , selectedAnswer : AnswerId
-    , correctAnswer : AnswerId
+    , selectedAnswer : String
+    , correctAnswer : String
     , answers : List Answer
     }
 
 
 type alias Model =
     { title : String
-    , currentQuestion : QuestionId
+    , currentQuestion : String
     , questions : List Question
     , scratch : String
     }
@@ -87,24 +69,24 @@ type alias Model =
 init : Model
 init =
     Model "This the title for the quiz"
-        (QuestionId "q1")
-        [ Question (QuestionId "q1")
+        "q1"
+        [ Question "q1"
             "This is question 1?"
-            (AnswerId "")
-            (AnswerId "a1")
-            [ Answer (AnswerId "a1") "This is answer 1."
-            , Answer (AnswerId "a2") "This is answer 2."
-            , Answer (AnswerId "a3") "All of above."
-            , Answer (AnswerId "a4") "None of above."
+            ""
+            "a1"
+            [ Answer "a1" "This is answer 1."
+            , Answer "a2" "This is answer 2."
+            , Answer "a3" "All of above."
+            , Answer "a4" "None of above."
             ]
-        , Question (QuestionId "q2")
+        , Question "q2"
             "This is question 2?"
-            (AnswerId "")
-            (AnswerId "a8")
-            [ Answer (AnswerId "a5") "This is q2, answer 1."
-            , Answer (AnswerId "a6") "This is q2, answer 2."
-            , Answer (AnswerId "a7") "All of above."
-            , Answer (AnswerId "a8") "None of above."
+            ""
+            "a8"
+            [ Answer "a5" "This is q2, answer 1."
+            , Answer "a6" "This is q2, answer 2."
+            , Answer "a7" "All of above."
+            , Answer "a8" "None of above."
             ]
         ]
         ""
@@ -112,32 +94,32 @@ init =
 
 nextEntry : Model -> Model
 nextEntry model =
-    if model.currentQuestion == QuestionId "q2" then
-        { model | currentQuestion = QuestionId "q1" }
+    if model.currentQuestion == "q2" then
+        { model | currentQuestion = "q1" }
 
     else
-        { model | currentQuestion = QuestionId "q2" }
+        { model | currentQuestion = "q2" }
 
 
 type Msg
-    = Update QuestionId AnswerId
+    = Update String String
     | NextEntry
 
 
 update : Msg -> Model -> Model
 update msg model =
     case Debug.log "msg" msg of
-        Update (QuestionId newq) (AnswerId newa) ->
+        Update newq newa ->
             let
                 result = 
                     updateIf 
-                        (\q -> q.id == QuestionId newq) 
+                        (\q -> q.id == newq) 
                         (\q -> 
                             { answers = q.answers
                             , correctAnswer = q.correctAnswer
                             , description = q.description
                             , id = q.id
-                            , selectedAnswer = AnswerId newa
+                            , selectedAnswer = newa
                             }
                         )
                         model.questions
@@ -151,7 +133,7 @@ update msg model =
 
 makeInput : Answer -> Input.Option String Msg
 makeInput answer =
-    Input.option (answerIdAsString answer.id) (Element.text answer.description)
+    Input.option answer.id (Element.text answer.description)
 
 view : Model -> Html Msg
 view model =
@@ -205,10 +187,10 @@ viewQuestion model =
 
                 Nothing ->
                     { answers = []
-                    , correctAnswer = AnswerId "a0"
+                    , correctAnswer = "a0"
                     , description = "String"
-                    , id = QuestionId "q0"
-                    , selectedAnswer = AnswerId "a0"
+                    , id = "q0"
+                    , selectedAnswer = "a0"
                     }
 
 
@@ -234,7 +216,7 @@ viewQuestion model =
         , Background.color grey
         ]
         { selected = Just model.scratch
-        , onChange = \new -> Update (model.currentQuestion) (AnswerId new)
+        , onChange = \new -> Update (model.currentQuestion) new
         , label = Input.labelAbove [ Font.size 20, paddingXY 0 12 ] (Element.text curQuestionDescription)
         , options = List.map makeInput curQuestionAnswers
         }
