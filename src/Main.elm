@@ -68,10 +68,10 @@ type alias Model =
 
 init : Model
 init =
-    Model "This the title for the quiz"
+    Model "Title of Quiz"
         "q1"
         [ Question "q1"
-            "This is question 1?"
+            "¿This is question 1?"
             ""
             "a1"
             [ Answer "a1" "This is answer 1."
@@ -80,7 +80,7 @@ init =
             , Answer "a4" "None of above."
             ]
         , Question "q2"
-            "This is question 2?"
+            "¿This is question 2?"
             ""
             "a8"
             [ Answer "a5" "This is q2, answer 1."
@@ -147,7 +147,7 @@ view model =
             , centerY
             , centerX
             , spacing 36
-            , padding 10
+            , padding 100
             ]
             [ el
                 [ Region.heading 1
